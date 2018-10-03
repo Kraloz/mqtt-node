@@ -1,13 +1,16 @@
-var mqtt = require('mqtt')
-var client  = mqtt.connect('mqtt://172.16.2.205:1883')
+require("dotenv").config();
+var env = process.env;
 
-client.on('connect', function () {
-    console.log("Conectado!")
-    
-})
+var mqtt = require("mqtt");
+var client  = mqtt.connect(env.MQTT_URI);
 
+client.on("connect", () => {
+    console.log("Conectado!");
+});
+var i = 0;
+setInterval(() => {
+    i++;
+    var Sensor = {id:1,valor:i};
 
-setInterval(function(){
- 	client.publish("/test", "eskere")
-
-}, 3000)
+    client.publish("/test", JSON.stringify(Sensor));
+}, 1500);
