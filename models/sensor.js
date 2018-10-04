@@ -1,6 +1,5 @@
-// @param : sequelize (instancia de Sequelize.js)
+// @param : db (instancia de Sequelize.js)
 // @param : type (instancia de la conexión a la base de datos)
-
 module.exports = (db, type) => {
 
     return db.define("sensores", {
@@ -17,24 +16,6 @@ module.exports = (db, type) => {
         freezeTableName: true
     });
 };
-/*
-Sensor.customUpdate = function (sensor){
-    Sensor.update({
-        valor: sensor.valor,
-    }, {
-        where: {
-            id: sensor.id
-        }
-    })
-        .then(() => { this.customShow(sensor); });
-};
-Sensor.customShow = function (sensor){
-    Sensor.findById(sensor.id)
-        .then(function (elemento) {
-            console.log("BD:");
-            console.log("ID: "+elemento.id);
-            console.log("Valor: "+elemento.valor);
-            console.log(typeof sensor);
-        });
-};
-*/
+
+// exports: ESTE MÓDULO EXPORTA UNA FUNCIÓN (ANÓNIMA) 
+//  QUE INSTANCIA EL ESQUEMA DE LOS SENSORES
