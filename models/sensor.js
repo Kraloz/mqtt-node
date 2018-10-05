@@ -12,7 +12,7 @@ module.exports = (db, type) => {
             type: type.INTEGER,
             field:"valor"
         }
-    }, {
+    },{
         freezeTableName: true
     });
 };

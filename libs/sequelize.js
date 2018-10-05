@@ -8,7 +8,7 @@ var env = process.env;
 var Sequelize = require("Sequelize");
 
 // Modelo del sensor
-var ModelSensor = require("./sensor.js");
+var ModelSensor = require("../models/sensor.js");
 
 /* FIN IMPORTS */
 
@@ -25,12 +25,14 @@ const db = new Sequelize(env.DB_NAME, env.DB_USERNAME, "", {
     },
     define: {
         timestamps: false
-    }
+    },
+    operatorsAliases: false // con esto evitamos el warning del siguiente issue : https://github.com/sequelize/sequelize/issues/8417#issuecomment-334994778
 });
 
 
 // Se instancia el esquema del modelo Sensor
 const Sensor = ModelSensor(db, Sequelize);
+
 
 // Exports:
 module.exports.Sensor = Sensor;
