@@ -58,11 +58,12 @@ app.get("/", function(req, res) {
 
 // ESTO NO ANDA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (todavía)
 // capaz que después de un try-catch devuelva un true-false y si es true entonces hago socket.emit desde la función del canal? idk
-function io_getSensores(socket){
+function io_getSensores(){
+    //console.log(socket);
     Sensor.findAll()
         .then( (sensores) => {
-            var json_sensores = JSON.stringify(sensores);
-            socket.emit("respuestaSensores", json_sensores);
+            //console.log(sensores)
+            io.emit("respuestaSensores", {"sensores": sensores});
         });
 }
 
@@ -81,7 +82,9 @@ function updateSensor(data){
             id: json_obj.id
         }
         // acá debería poder llamar a io_getSensores() y pasarle socket, PEEERO, al pasarlo como parámetro, socket deja de existir.
+        
     });
+    io_getSensores();
 }
 /* Fin funciones handlers */
 
@@ -107,12 +110,9 @@ client.on("message", (topic, message) => {
 io.on("connection", (socket) => {
     // acá debería poder llamar a io_getSensores() y pasarle socket, PEEERO, al pasarlo como parámetro, socket deja de existir.
     // osea: ->
-    socket.on("getSensores", () => {
-        Sensor.findAll()
-            .then( (sensores) => {
-                // -> acá socket no estaría funcionando
-                socket.emit("respuestaSensores", {"sensores": sensores});
-            });        
+    
+    io.on("getSensores", () => {
+        io_getSensores();      
     });
 });
 
