@@ -11,7 +11,6 @@
   "dependencies": {
     "ajv": "^6.5.4",
     "dotenv": "^6.0.0",
-    "eslint": "^5.6.1",
     "express": "^4.16.3",
     "mqtt": "^2.18.8",
     "mysql": "^2.16.0",
@@ -20,5 +19,8 @@
     "sequelize": "^4.39.0",
     "sequelize-cli": "^4.1.1",
     "socket.io": "^2.1.1"
+  },
+  "dev-dependencies": {
+    "eslint": "^5.6.1"
   }
 }

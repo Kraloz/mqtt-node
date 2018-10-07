@@ -51,5 +51,6 @@ Sensor.updateValor = function (json_data, callback) {
 };
 
 
+
 // Exports:
 module.exports.Sensor = Sensor;
