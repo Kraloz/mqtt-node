@@ -23,10 +23,13 @@ catch(err) {
 }
 
 // Modelos BD
-var models = require("./libs/db.js");
+const models = require("./db/db.js");
 // Instancias de modelos
 var Sensor =  models.Sensor;
 
+
+// SchemaValidator
+var ajv = require("./db/schemas.js");            
 
 // SocketIO para comunicación "ws" cliente-servidor
 var SocketIO = require("socket.io");
@@ -59,12 +62,24 @@ var io_getSensores = function () {
         .then( function (sensores) {
             io.emit("respuestaSensores", {"sensores": sensores});
         });
-};    
+};
 // Cuando se reciba un mensaje 
 client.on("message", (topic, message) => {
-    Sensor.updateValor(message, io_getSensores);
+    // Depende el tópico
+    switch(topic){
+    case "/test":
+        // Parseo el json
+        message = JSON.parse(message);
+        // valido si el json que me llegó respeta el schema del sensor
+        if(ajv.validate("sensorSchema", message)){
+            // Si se valida, lo mando para updatear
+            Sensor.updateValor(message, io_getSensores);
+        }else {
+            // Sino logeo el error por cuestiones de debug
+            console.log(ajv.errorsText());
+        }
+    }
 });
-
 
 /* SocketIO Listeners */
 // Se maneja la conexión

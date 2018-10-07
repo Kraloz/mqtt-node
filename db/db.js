@@ -1,5 +1,4 @@
 /* IMPORTS */
-
 // dotenv para las variables de entorno
 require("dotenv").config();
 var env = process.env;
@@ -8,8 +7,7 @@ var env = process.env;
 var Sequelize = require("Sequelize");
 
 // Modelo del sensor
-var ModelSensor = require("../models/sensor.js");
-
+var ModelSensor = require("./models/sensor.js");
 /* FIN IMPORTS */
 
 
@@ -29,28 +27,21 @@ const db = new Sequelize(env.DB_NAME, env.DB_USERNAME, "", {
     operatorsAliases: false // con esto evitamos el warning del siguiente issue : https://github.com/sequelize/sequelize/issues/8417#issuecomment-334994778
 });
 
-
 // Se instancia el esquema del modelo Sensor
 const Sensor = ModelSensor(db, Sequelize);
 // Custom model methods:
-Sensor.updateValor = function (json_data, callback) {
-    // Se parsea la cadena json a un objeto 
-    var data_str = json_data.toString();
-    var json_obj= JSON.parse(data_str);
-    
-    // Se actualiza el valor del sensor que llegó
+Sensor.updateValor = function (data, callback) {    
+    // Se actualiza el valor del sensor que llegó (objeto que ya está parseado validado de antes)
     this.update({
-        valor: json_obj.valor,
+        valor: data.valor,
     }, {
         where: {
-            id: json_obj.id
+            id: data.id
         }
     });
-    // el callback debería ser la función que haga emit de los sensores
+    // el callback está pensado para la función que haga emit de los sensores, pero sirve como callback común
     callback();
 };
-
-
 
 // Exports:
 module.exports.Sensor = Sensor;

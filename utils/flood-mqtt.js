@@ -10,7 +10,7 @@ client.on("connect", () => {
 var i = 0;
 setInterval(() => {
     i++;
-    var Sensor = {id:1,valor:i};
+    var Sensor = {id:1,descripcion:"sensor xd",valor:i};
     client.publish("/test", JSON.stringify(Sensor));
     console.log("publicado:");
     console.log(Sensor);
