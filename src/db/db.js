@@ -8,6 +8,7 @@ var Sequelize = require("Sequelize");
 
 // Modelo del sensor
 var ModelSensor = require("./models/sensor.js");
+var ModelLed = require("./models/led.js");
 /* FIN IMPORTS */
 
 
@@ -30,7 +31,7 @@ const db = new Sequelize(env.DB_NAME, env.DB_USERNAME, "", {
 // Se instancia el esquema del modelo Sensor
 const Sensor = ModelSensor(db, Sequelize);
 // Custom model methods:
-Sensor.updateValor = function (data, callback) {    
+Sensor.updateValor = function (data) {    
     // Se actualiza el valor del sensor que llegó (objeto que ya está parseado validado de antes)
     this.update({
         valor: data.valor,
@@ -39,9 +40,26 @@ Sensor.updateValor = function (data, callback) {
             id: data.id
         }
     });
-    // el callback está pensado para la función que haga emit de los sensores, pero sirve como callback común
-    callback();
+};
+// Se instancia el esquema del modelo Led
+const Led = ModelLed(db, Sequelize);
+// Custom model methods:
+Led.NOT = function (data) {
+    // Se actualiza el valor del sensor que llegó (objeto que ya está parseado validado de antes)
+    this.findById(data.id)
+        .then( function (led) {
+            Led.update({
+                estado: !led.estado,
+            }, {
+                where: {
+                    id: led.id
+                }
+            });
+        })
+        .catch( (err) => console.log(err.message));    
+    
 };
 
 // Exports:
 module.exports.Sensor = Sensor;
+module.exports.Led = Led;

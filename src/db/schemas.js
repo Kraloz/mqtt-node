@@ -4,7 +4,9 @@ ajv.addMetaSchema(require("ajv/lib/refs/json-schema-draft-06.json"));
 
 // Esquemas DB
 const sensorSchema = require("./schemas/sensor.json");
+const ledSchema = require("./schemas/led.json");
 
 ajv.addSchema(sensorSchema, "sensorSchema");
+ajv.addSchema(ledSchema, "ledSchema");
 
 module.exports = ajv;

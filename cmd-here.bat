@@ -1,1 +1,2 @@
 call cmd
+cd ./src

@@ -7,10 +7,9 @@ var client  = mqtt.connect(env.MQTT_URI);
 client.on("connect", () => {
     console.log("Conectado!");
 });
-var i = 0;
+
 setInterval(() => {
-    i++;
-    var Sensor = {id:1,descripcion:"sensor xd",valor:i};
+    var Sensor = {id:1,descripcion:"sensor xd",valor:parseInt((Math.random() * (40 - 5)))};
     client.publish("/test", JSON.stringify(Sensor));
     console.log("publicado:");
     console.log(Sensor);
