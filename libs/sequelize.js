@@ -9,6 +9,7 @@ var Sequelize = require("Sequelize");
 
 // Modelo del sensor
 var ModelSensor = require("../models/sensor.js");
+var ModelLed = require("../models/led.js");
 
 /* FIN IMPORTS */
 
@@ -33,6 +34,9 @@ const db = new Sequelize(env.DB_NAME, env.DB_USERNAME, "", {
 // Se instancia el esquema del modelo Sensor
 const Sensor = ModelSensor(db, Sequelize);
 
+const Led = ModelLed(db, Sequelize);
+
 
 // Exports:
 module.exports.Sensor = Sensor;
+module.exports.Led = Led;

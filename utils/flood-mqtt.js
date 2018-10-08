@@ -9,10 +9,12 @@ client.on("connect", () => {
 });
 var i = 0;
 setInterval(() => {
-    i++;
+    i = Math.floor((Math.random() * 30) + 20); 
     var Sensor = {id:1,valor:i};
+    
 
     client.publish("/test", JSON.stringify(Sensor));
+    
 
     console.log("publicado:");
     console.log(Sensor);

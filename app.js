@@ -25,6 +25,8 @@ var models = require("./libs/sequelize.js");
 // Instancias de modelos
 var Sensor =  models.Sensor;
 
+var Led = models.Led;
+
 
 // SocketIO para comunicación "ws" cliente-servidor
 var SocketIO = require("socket.io");
@@ -54,15 +56,15 @@ app.get("/", function(req, res) {
 
 /* Funciones handlers */
 
-// Funcion que va a usar SocketIO para consultar y emitir todos los sensores
+// Funcion que va a usar SocketIO para consultar y emitir todos los sensores y leds
 
-// ESTO NO ANDA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA (todavía)
-// capaz que después de un try-catch devuelva un true-false y si es true entonces hago socket.emit desde la función del canal? idk
 function io_getSensores(){
-    //console.log(socket);
+    
     Sensor.findAll()
         .then( (sensores) => {
-            //console.log(sensores)
+            
+            
+            
             io.emit("respuestaSensores", {"sensores": sensores});
         });
 }
@@ -81,11 +83,71 @@ function updateSensor(data){
         where: {
             id: json_obj.id
         }
-        // acá debería poder llamar a io_getSensores() y pasarle socket, PEEERO, al pasarlo como parámetro, socket deja de existir.
-        
     });
     io_getSensores();
 }
+
+function updateLed(data){
+    
+    //se deserealiza 
+    var data_deserialized = JSON.stringify(data);
+    console.log("Led deseralizado en el updateLed: "+data_deserialized);
+    var json_obj= JSON.parse(data_deserialized);
+    
+    var nuevoEstado;
+    
+    
+    // Se actualiza el valor del led en la base de datos
+    if (json_obj[0].estado == 1){
+        nuevoEstado = 0;
+    }else{
+        nuevoEstado = 1;
+    }
+    console.log("ID del LED: "+json_obj[0].id);
+    
+    Led.update({
+        estado: nuevoEstado,
+    }, {
+        where: {
+            id: json_obj[0].id
+        }
+    });
+    io_getLed();
+}
+
+function io_switchLed(){
+    Led.findAll()
+        .then( (led) => {
+            
+            updateLed(led);
+        })
+}
+
+function io_getLed(){
+    console.log("Ejecucion de io_getLed");
+    Led.findAll()
+        .then( (led1) => {
+            //Si intento deserializar el Led de Sequelize acá, devuelve cualquier cosa por alguna razon 
+            /*var data_deserialized = JSON.stringify(led);
+            console.log(data_deserialized[0]);
+            client.publish("/led",data_deserialized[0]);*/
+            //Pero si paso a una funcion y despues lo deserializo, se hace bien, asi que...¿¿??
+            console.log("TODO CHETO");
+            sendLed(led1);
+        }).catch(function (err) {
+            console.log("ERROR: "+err);
+          });
+}
+
+function sendLed(data){
+    var data_deserialized = JSON.stringify(data);
+    console.log("WTF: "+data_deserialized);
+    client.publish("/led", data_deserialized );
+    
+    
+}
+
+
 /* Fin funciones handlers */
 
 
@@ -95,6 +157,7 @@ function updateSensor(data){
 client.on("connect", () => {
     console.log("Conectado!");
     client.subscribe("/test");
+    //client.subscribe("/led");
 });
 
 
@@ -105,14 +168,19 @@ client.on("message", (topic, message) => {
 
 
 
-/* SocketIO Listeners */
 
+/* SocketIO Listeners */
 io.on("connection", (socket) => {
-    // acá debería poder llamar a io_getSensores() y pasarle socket, PEEERO, al pasarlo como parámetro, socket deja de existir.
-    // osea: ->
-    
-    io.on("getSensores", () => {
+    socket.on("getSensores", () => {
         io_getSensores();      
+    });
+
+    socket.on("switchLed", () => {
+        io_switchLed();      
+    });
+
+    socket.on("getLed", () => {
+        //io_getLed();      
     });
 });
 
