@@ -1,0 +1,31 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://localhost:3000/db/schemas/led.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "id",
+    "estado"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/id",
+      "type": "integer",
+      "title": "The Id Schema",
+      "default": 0,
+      "examples": [
+        1
+      ]
+    },
+    "estado": {
+      "$id": "#/properties/estado",
+      "type": "boolean",
+      "title": "The Estado Schema",
+      "default": false,
+      "examples": [
+        true
+      ]
+    }
+  }
+}
