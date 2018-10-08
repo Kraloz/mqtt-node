@@ -27,6 +27,7 @@ const models = require("./db/db.js");
 // Instancias de modelos
 var Sensor =  models.Sensor;
 
+var Led = models.Led;
 
 // SchemaValidator
 var ajv = require("./db/schemas.js");            
@@ -47,12 +48,74 @@ server.listen(3000, "0.0.0.0", function() {
     console.log("Servidor corriendo en http://localhost:3000");
 });
 
+
+function updateLed(data){
+    
+    //se deserealiza 
+    var data_deserialized = JSON.stringify(data);
+    console.log("Led deseralizado en el updateLed: "+data_deserialized);
+    var json_obj= JSON.parse(data_deserialized);
+    
+    var nuevoEstado;
+    
+    // Se actualiza el valor del led en la base de datos
+    if (json_obj[0].estado == 1){
+        nuevoEstado = 0;
+    }else{
+        nuevoEstado = 1;
+    }
+    console.log("ID del LED: "+json_obj[0].id);
+    
+    Led.update({
+        estado: nuevoEstado,
+    }, {
+        where: {
+            id: json_obj[0].id
+        }
+    });
+    io_getLed();
+}
+
+function io_switchLed(){
+    Led.findAll()
+        .then( (led) => {
+            
+            updateLed(led);
+        })
+}
+
+function io_getLed(){
+    console.log("Ejecucion de io_getLed");
+    Led.findAll()
+        .then( (led1) => {
+            //Si intento deserializar el Led de Sequelize acá, devuelve cualquier cosa por alguna razon 
+            /*var data_deserialized = JSON.stringify(led);
+            console.log(data_deserialized[0]);
+            client.publish("/led",data_deserialized[0]);*/
+            //Pero si paso a una funcion y despues lo deserializo, se hace bien, asi que...¿¿??
+            console.log("TODO CHETO");
+            sendLed(led1);
+        }).catch(function (err) {
+            console.log("ERROR: "+err);
+          });
+}
+
+function sendLed(data){
+    var data_deserialized = JSON.stringify(data);
+    console.log("WTF: "+data_deserialized);
+    client.publish("/led", data_deserialized );
+    
+    
+}
+
+
 /* MQTT Listeners */
 
 // Cuando se conecte con el broker, se suscribe al topico "/test"
 client.on("connect", () => {
     console.log("Conectado!");
     client.subscribe("/test");
+    //client.subscribe("/led");
 });
 
 
@@ -82,9 +145,20 @@ client.on("message", (topic, message) => {
 });
 
 /* SocketIO Listeners */
-// Se maneja la conexión
-io.on("connection", function() {    
-    io.on("getSensores", function() {
-        io_getSensores();
+
+io.on("connection", (socket) => {
+    // acá debería poder llamar a io_getSensores() y pasarle socket, PEEERO, al pasarlo como parámetro, socket deja de existir.
+    // osea: ->
+    
+    io.on("getSensores", () => {
+        io_getSensores();      
+    });
+
+    socket.on("switchLed", () => {
+        io_switchLed();      
+    });
+
+    socket.on("getLed", () => {
+        //io_getLed();      
     });
 });
