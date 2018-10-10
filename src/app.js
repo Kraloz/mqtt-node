@@ -44,7 +44,7 @@ app.use(express.static("public"));
 
 // Ponemos a correr el servidor en el puerto 3000
 server.listen(3000, "0.0.0.0", function() {
-    console.log("Servidor corriendo en http://localhost:3000");
+    console.log("Servidor corriendo");
 });
 
 /* MQTT Listeners */
@@ -57,7 +57,6 @@ client.on("connect", () => {
 });
 
 
-// definición de función "callback" para hacer query->emit de los sensores
 var io_getSensores = function () {    
     Sensor.findAll()
         .then( function (sensores) {

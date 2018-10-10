@@ -1,2 +1,4 @@
-call cmd
+
 cd ./src
+cls
+cmd

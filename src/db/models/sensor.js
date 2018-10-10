@@ -7,6 +7,10 @@ module.exports = (db, type) => {
             field: "id",
             primaryKey: true
         },
+        descripcion: {
+            type: type.STRING,
+            field: "descripcion"
+        },
         valor: {
             type: type.INTEGER,
             field:"valor"

@@ -57,7 +57,6 @@ Led.NOT = function (data) {
             });
         })
         .catch( (err) => console.log(err.message));    
-    
 };
 
 // Exports:

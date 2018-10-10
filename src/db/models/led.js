@@ -1,7 +1,7 @@
 // @param : db (instancia de Sequelize.js)
 // @param : type (instancia de la conexión a la base de datos)
 module.exports = (db, type) => {
-    return db.define("led", {
+    return db.define("leds", {
         id: {
             type: type.INTEGER,
             field: "id",
